@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quiz: Elige tu Board Ideal</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { 
+      font-family: 'DM Sans', sans-serif;
+      background: linear-gradient(135deg, #fef3c7 0%, #86efac 100%);
+      min-height: 100vh;
+      padding: 20px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .container { 
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+      max-width: 600px;
+      width: 100%;
+      padding: 40px;
+    }
+    .header { 
+      text-align: center;
+      margin-bottom: 40px;
+    }
+    .header h1 { 
+      font-size: 28px;
+      color: #65a30d;
+      margin-bottom: 8px;
+    }
+    .header p { 
+      color: #854d0e;
+      font-size: 14px;
+    }
+    .progress-bar {
+      height: 4px;
+      background: #fef08a;
+      border-radius: 2px;
+      margin-bottom: 40px;
+      overflow: hidden;
+    }
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #eab308, #22c55e);
+      width: 0%;
+      transition: width 0.3s ease;
+    }
+    .question-block {
+      margin-bottom: 40px;
+      animation: fadeIn 0.5s ease-in;
+    }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    .question-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: #65a30d;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .question-number {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 28px;
+      height: 28px;
+      background: #eab308;
+      color: #854d0e;
+      border-radius: 50%;
+      font-size: 12px;
+      font-weight: bold;
+    }
+    .options-grid {
+      display: grid;
+      gap: 12px;
+    }
+    .option-btn {
+      padding: 16px;
+      border: 2px solid #e5e7eb;
+      border-radius: 8px;
+      background: white;
+      cursor: pointer;
+      text-align: left;
+      font-size: 14px;
+      font-weight: 500;
+      color: #1f2937;
+      transition: all 0.2s ease;
+    }
+    .option-btn:hover {
+      border-color: #eab308;
+      background: white;
+      transform: translateX(4px);
+    }
+    .option-btn.selected {
+      background: white;
+      border-color: #eab308;
+      border-left: 4px solid #eab308;
+      color: #1f2937;
+      box-shadow: 0 4px 12px rgba(234, 179, 8, 0.2);
+    }
+    .hidden { display: none !important; }
+    .result-card {
+      background: linear-gradient(135deg, #eab308 0%, #22c55e 100%);
+      border-radius: 12px;
+      padding: 32px;
+      color: #1f2937;
+      text-align: center;
+      animation: slideUp 0.5s ease-out;
+    }
+    @keyframes slideUp { 
+      from { opacity: 0; transform: translateY(20px); } 
+      to { opacity: 1; transform: translateY(0); } 
+    }
+    .result-title {
+      font-size: 32px;
+      font-weight: 700;
+      margin-bottom: 12px;
+    }
+    .result-desc {
+      font-size: 14px;
+      line-height: 1.6;
+      opacity: 0.9;
+      margin-bottom: 24px;
+    }
+    .result-features {
+      background: rgba(255,255,255,0.2);
+      border-radius: 8px;
+      padding: 16px;
+      margin-top: 16px;
+      font-size: 13px;
+      line-height: 1.7;
+      text-align: left;
+    }
+    .result-jira {
+      background: rgba(255,255,255,0.3);
+      border-radius: 8px;
+      padding: 12px 16px;
+      margin-top: 12px;
+      font-size: 13px;
+      font-weight: 600;
+      text-align: center;
+    }
+    .reset-btn {
+      margin-top: 24px;
+      padding: 12px 24px;
+      background: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 600;
+      color: #eab308;
+      transition: all 0.2s ease;
+    }
+    .reset-btn:hover {
+      background: #f0fdf4;
+      transform: scale(1.02);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>¿Cuál es tu Board Ideal?</h1>
+      <p>Responde 4 preguntas y descubre qué metodología te conviene</p>
+    </div>
+
+    <div class="progress-bar">
+      <div class="progress-fill" id="progressFill"></div>
+    </div>
+
+    <div id="quiz">
+      <div class="question-block">
+        <div class="question-title">
+          <div class="question-number">1</div>
+          ¿Tu equipo es de Área o Producto?
+        </div>
+        <div class="options-grid">
+          <button class="option-btn" onclick="selectAnswer(1, 'area', this)">
+            🔧 Área (soporte, infra, mantenimiento)
+          </button>
+          <button class="option-btn" onclick="selectAnswer(1, 'producto', this)">
+            🚀 Producto (features, desarrollo)
+          </button>
+        </div>
+      </div>
+
+      <div class="question-block">
+        <div class="question-title">
+          <div class="question-number">2</div>
+          ¿Prefieres incrementos o ritmo continuo?
+        </div>
+        <div class="options-grid">
+          <button class="option-btn" onclick="selectAnswer(2, 'incrementos', this)">
+            📅 Incrementos (sprints, ciclos definidos)
+          </button>
+          <button class="option-btn" onclick="selectAnswer(2, 'continuo', this)">
+            ♾️ Continuo (flujo sin ciclos)
+          </button>
+        </div>
+      </div>
+
+      <div class="question-block">
+        <div class="question-title">
+          <div class="question-number">3</div>
+          ¿Necesitas un board para one-off o largo plazo?
+        </div>
+        <div class="options-grid">
+          <button class="option-btn" onclick="selectAnswer(3, 'oneoff', this)">
+            ⚡ One-off (proyecto puntual, < 3 meses)
+          </button>
+          <button class="option-btn" onclick="selectAnswer(3, 'largoplazo', this)">
+            🌱 Largo plazo (operación continua)
+          </button>
+        </div>
+      </div>
+
+      <div class="question-block">
+        <div class="question-title">
+          <div class="question-number">4</div>
+          ¿Autonomía o monitorización?
+        </div>
+        <div class="options-grid">
+          <button class="option-btn" onclick="selectAnswer(4, 'autonomia', this)">
+            🦅 Autonomía (equipo auto-organizado)
+          </button>
+          <button class="option-btn" onclick="selectAnswer(4, 'monitoreo', this)">
+            👁️ Monitorización (visibilidad + SLAs)
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div id="result" class="hidden">
+      <div class="result-card">
+        <div class="result-title" id="resultTitle"></div>
+        <div class="result-desc" id="resultDesc"></div>
+        <div class="result-features" id="resultFeatures"></div>
+        <div class="result-jira" id="resultJira"></div>
+      </div>
+      <button class="reset-btn" onclick="resetQuiz()">← Volver a responder</button>
+    </div>
+  </div>
+
+  <script>
+    const answers = {};
+    const resultados = {
+      'area_continuo_largoplazo_autonomia': {
+        title: '🌊 Kanban Simple',
+        desc: 'Flujo continuo, máxima flexibilidad.',
+        features: '✓ Columnas: To Do | In Progress | Review | Done\n✓ Sin sprints, entrada/salida constante\n✓ Límite WIP (3-4 items)\n✓ Retro mensual (opcional)',
+        jira: 'Espacio gestionado por el equipo'
+      },
+      'producto_incrementos_largoplazo_autonomia': {
+        title: '🔄 Scrum Ligero',
+        desc: 'Estructura clara con ciclos predecibles.',
+        features: '✓ Sprints 2-3 semanas\n✓ Daily standup 15 min\n✓ Sprint planning + Demo/Retro\n✓ Velocidad tracked',
+        jira: 'Software gestionado por el equipo'
+      },
+      'producto_incrementos_largoplazo_monitoreo': {
+        title: '⚙️ Scrum Completo',
+        desc: 'Máxima visibilidad y alineación.',
+        features: '✓ Ceremonia completa cada sprint\n✓ Velocidad y burndown monitoreados\n✓ Sprints 2 semanas\n✓ Alineación clara con negocio',
+        jira: 'Software gestionado por el equipo'
+      },
+      'area_continuo_largoplazo_monitoreo': {
+        title: '🚦 Kanban + Políticas',
+        desc: 'Flujo monitoreado con SLAs.',
+        features: '✓ Kanban con SLA por columna\n✓ Lead time y cycle time tracked\n✓ WIP estrictos por etapa\n✓ Escaladas automáticas',
+        jira: 'Software gestionado por la empresa'
+      },
+      'producto_incrementos_oneoff_autonomia': {
+        title: '⚡ Tabla Simple',
+        desc: 'Máxima velocidad, mínima complejidad.',
+        features: '✓ To Do | Doing | Done\n✓ Sprint 1-2 semanas\n✓ Retro única al final\n✓ Sin overhead',
+        jira: 'Software gestionado por el equipo'
+      },
+      'area_incrementos_largoplazo_autonomia': {
+        title: '🎯 Scrumban',
+        desc: 'Lo mejor de ambos mundos.',
+        features: '✓ Ciclos cortos tipo sprint\n✓ Entrada continua de tareas\n✓ WIP limitado por tipo\n✓ Flexible pero estructurado',
+        jira: 'Espacio gestionado por el equipo'
+      },
+      'area_continuo_oneoff_autonomia': {
+        title: '📋 Kanban Ad-hoc',
+        desc: 'Sin estructura, máxima simplicidad.',
+        features: '✓ Tabla flexible según contexto\n✓ Columnas custom\n✓ Sin retros obligatorias\n✓ Ideal para cortos plazos',
+        jira: 'Espacio gestionado por el equipo'
+      },
+    };
+
+    function selectAnswer(question, answer, button) {
+      answers[question] = answer;
+      
+      const btns = button.parentElement.querySelectorAll('.option-btn');
+      btns.forEach(b => b.classList.remove('selected'));
+      button.classList.add('selected');
+      
+      updateProgress();
+      
+      if (Object.keys(answers).length === 4) {
+        setTimeout(showResult, 600);
+      }
+    }
+
+    function updateProgress() {
+      const progress = (Object.keys(answers).length / 4) * 100;
+      document.getElementById('progressFill').style.width = progress + '%';
+    }
+
+    function showResult() {
+      const key = `${answers[1]}_${answers[2]}_${answers[3]}_${answers[4]}`;
+      const result = resultados[key] || {
+        title: '🔀 Combinación personalizada',
+        desc: 'Mezcla Kanban + Scrum según tu contexto.',
+        features: '✓ Usa principios de Kanban (flow)\n✓ Agrega ciclos tipo Scrum\n✓ Adapta según necesites',
+        jira: 'Espacio gestionado por el equipo'
+      };
+      
+      document.getElementById('quiz').classList.add('hidden');
+      document.getElementById('result').classList.remove('hidden');
+      document.getElementById('resultTitle').textContent = result.title;
+      document.getElementById('resultDesc').textContent = result.desc;
+      document.getElementById('resultFeatures').textContent = result.features;
+      document.getElementById('resultJira').textContent = '📌 ' + result.jira;
+    }
+
+    function resetQuiz() {
+      Object.keys(answers).forEach(k => delete answers[k]);
+      document.querySelectorAll('.option-btn').forEach(b => b.classList.remove('selected'));
+      document.getElementById('progressFill').style.width = '0%';
+      document.getElementById('quiz').classList.remove('hidden');
+      document.getElementById('result').classList.add('hidden');
+    }
+  </script>
+</body>
+</html>
